@@ -33,7 +33,7 @@ module.exports = {
       issuer: i,
       subject: s,
       audience: a,
-      expiresIn: '24h',
+      expiresIn: '7d',
       algorithm: ['RS256'],
     };
 
