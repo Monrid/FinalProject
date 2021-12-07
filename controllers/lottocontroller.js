@@ -1,5 +1,8 @@
 const Lotto = require("../models/lottoschema");
 const History = require("../models/historyschema");
+const axios = require("axios");
+const { response } = require("express");
+const apiUrl = "https://lotto.api.rayriffy.com"
 
 exports.createlotto = async (req, res) => {
     const body = req.body
@@ -65,4 +68,67 @@ exports.getAll = async (req, res) => {
     } catch (error) {
         res.status(500).json({result:"Internal Servrer Error", message:""});
     }
+};
+
+exports.check = async (req, res ) => {
+    const id = req.body.id
+    const userlotto =req.body.userlotto
+    var result = false
+    var smallresult = false
+    var prizename = ""
+    var reward = ""
+    axios.get(`${apiUrl}/lotto/${id}`) 
+    .then((response) => {
+        if (response.data.status == "success") {
+            const prizes = response.data.response.prizes
+            const running = response.data.response.runningNumbers
+            if (result == false){
+                for (let i = 0 ; i < prizes.length ; i ++ ) {
+                    for (let j = 0 ; j < prizes[i].number.length ; j++) {
+                        if (userlotto.toString() == prizes[i].number[j]) {
+                            prizename = prizes[i].name
+                            reward = prizes[i].reward
+                            console.log(prizename, reward);
+                            result = true
+                            break
+                        };
+                    };
+                };
+            };
+            if (smallresult == false) {
+                // console.log('test1');
+                for (let i = 0 ; i < running.length ; i ++ ) {
+                    // console.log("test2");
+                    for (let j = 0 ; j < running[i].number.length ; j++) {
+                        // console.log("Test3",running[i].number[j], userlotto);
+                        if (userlotto.toString().substr(0, 3) == running[i].number[j]) { //เช็ค3ตัวหน้า
+                            prizename = running[i].name
+                            reward = running[i].reward
+                            console.log(prizename, reward);
+                            smallresult = true
+                            break
+                        }
+                        else if (userlotto.toString().substr(3, 6) == running[i].number[j]) { //เช็ค3ตัวหลัง
+                            prizename = running[i].name
+                            reward = running[i].reward
+                            console.log(prizename, reward);
+                            smallresult = true
+                            break
+                        }
+                        else if (userlotto.toString().substr(4, 6) == running[i].number[j]) { //เช็ค2ตัวหลัง
+                            prizename = running[i].name
+                            reward = running[i].reward
+                            console.log(prizename, reward);
+                            smallresult = true
+                            break
+                        };
+                    };
+                };
+            }
+            // console.log(userlotto.toString().substr(3, 6));
+            // console.log(response.data.response.prizes);
+            // console.log(response.data.response.runningNumbers);
+            res.status(200).json({ result: 'OK', message: 'Send data success', data: prizename, reward });
+        };
+    });
 };
