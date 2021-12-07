@@ -43,6 +43,18 @@ exports.buylotto = async (req, res) => {
     }
 };
 
+exports.gethistory = async (req, res) => {
+    const userID = req.userId
+    console.log(userID);
+    try {
+        const data = await History.find({userid:userID})
+        if (!data) return res.status(200).json({result: 'Not OK', message: 'Not have purchase history'});
+        res.status(200).json({result: 'Ok', message: "" , data: data});
+    } catch (error) {
+        res.status(500).json({result:"Internal Servrer Error", message:""});
+    }
+}
+
 exports.getlottoAvailable = async (req, res) => {
     try {
         const data = await Lotto.find()
@@ -125,10 +137,18 @@ exports.check = async (req, res ) => {
                     };
                 };
             }
-            // console.log(userlotto.toString().substr(3, 6));
             // console.log(response.data.response.prizes);
             // console.log(response.data.response.runningNumbers);
-            res.status(200).json({ result: 'OK', message: 'Send data success', data: prizename, reward });
+            var message = "ไม่ถูกรางวัล"
+            if (result || smallresult) {
+                message = "ถูกรางวัล"
+            };
+            const res_data = {
+                message : message,
+                prizename : prizename,
+                reward : reward
+            };
+            res.status(200).json({ result: 'OK', message: 'Send data success', data: res_data });
         };
     });
 };

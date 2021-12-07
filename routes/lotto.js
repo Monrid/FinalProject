@@ -8,5 +8,6 @@ router.post("/buy", jwt.verify, Lotto.buylotto);
 router.get("/get/available", jwt.verify, Lotto.getlottoAvailable);
 router.get("/get/all", jwt.verify, Lotto.getAll);
 router.post("/check", jwt.verify, Lotto.check);
+router.get("/history", jwt.verify, Lotto.gethistory);
 
 module.exports = router
