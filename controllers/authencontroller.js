@@ -48,3 +48,14 @@ exports.login = async (req, res) => {
     }
 };
 
+exports.currentUser = async (req, res) => {
+    try {
+        console.log(req.userId);
+        const doc = await User.findById(req.userId).select('-user_password')
+        res.status(200).send(doc);
+    }catch(err) {
+        console.log(err);
+        res.status(400).send("can't findById");
+    }
+};
+
